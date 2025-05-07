@@ -33,14 +33,17 @@ func ListProducts(c *gin.Context) {
 
 // POST /products
 func CreateProduct(c *gin.Context) {
+	userID := c.GetInt("userID")
 	var p models.Product
 	if err := c.BindJSON(&p); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid data"})
 		return
 	}
 
-	res, err := db.DB.Exec("INSERT INTO products (title, description, price, quantity) VALUES (?, ?, ?, ?)",
-		p.Title, p.Description, p.Price, p.Quantity)
+	p.UserID = userID
+
+	res, err := db.DB.Exec("INSERT INTO products (title, description, price, quantity, user_id) VALUES (?, ?, ?, ?, ?)",
+		p.Title, p.Description, p.Price, p.Quantity, p.UserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "insert failed"})
 		return
