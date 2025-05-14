@@ -21,12 +21,17 @@ func main() {
 	db.Init(config.GetDSN())
 
 	r := gin.Default()
+	r.LoadHTMLGlob("internal/templates/*.html")
 
 	// Роуты без авторизации
+	//r.GET("/", handlers.ShowHomePage)
+	r.GET("/login", handlers.ShowLoginPage)
+	r.GET("/register", handlers.ShowRegisterPage)
+
 	r.POST("/register", handlers.Register)
 	r.POST("/login", handlers.Login)
 
-	r.GET("/products", handlers.ListProducts) // публичный
+	r.GET("/", handlers.ListProducts) // публичный
 	r.GET("/products/:id", handlers.GetProductByID)
 
 	auth := r.Group("/")
@@ -35,6 +40,7 @@ func main() {
 		auth.POST("/products", handlers.CreateProduct)
 		auth.PUT("/products/:id", handlers.UpdateProduct)
 		auth.DELETE("/products/:id", handlers.DeleteProduct)
+		auth.GET("/my/products", handlers.ListMyProducts)
 	}
 
 	log.Println("Server started on :8080")
