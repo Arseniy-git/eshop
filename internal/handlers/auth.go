@@ -103,10 +103,11 @@ func Login(c *gin.Context) {
 
 	token, err := utils.GenerateJWT(user.ID)
 	if err != nil {
-		c.String(http.StatusInternalServerError, "JWT error")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not generate token"})
 		return
 	}
 
-	c.SetCookie("auth", token, 3600*24, "/", "", false, true)
-	c.Redirect(http.StatusSeeOther, "/")
+	//c.SetCookie("auth", token, 3600*24, "/", "", false, true)
+	c.SetCookie("Authorization", token, 3600, "/", "", false, true)
+	c.Redirect(http.StatusSeeOther, "/products/create")
 }

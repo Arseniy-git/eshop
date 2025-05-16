@@ -34,6 +34,8 @@ func main() {
 	r.GET("/", handlers.ListProducts) // публичный
 	r.GET("/products/:id", handlers.GetProductByID)
 
+	r.GET("/products/create", handlers.ShowCreateProductPage)
+
 	auth := r.Group("/")
 	auth.Use(middleware.JWTAuth())
 	{
@@ -41,6 +43,8 @@ func main() {
 		auth.PUT("/products/:id", handlers.UpdateProduct)
 		auth.DELETE("/products/:id", handlers.DeleteProduct)
 		auth.GET("/my/products", handlers.ListMyProducts)
+		r.POST("/products/create", handlers.CreateProduct)
+
 	}
 
 	log.Println("Server started on :8080")

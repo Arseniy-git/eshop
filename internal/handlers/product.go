@@ -5,6 +5,7 @@ import (
 	"eshop/internal/db"
 	"eshop/internal/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,6 +44,10 @@ import (
 // 	})
 // }
 
+func ShowCreateProductPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "create_product.html", nil)
+}
+
 func ListProducts(c *gin.Context) {
 	rows, err := db.DB.Query("SELECT id, title, description, price, quantity, user_id FROM products")
 	if err != nil {
@@ -68,26 +73,65 @@ func ListProducts(c *gin.Context) {
 }
 
 // POST /products
+// func CreateProduct(c *gin.Context) {
+// 	userID := c.GetInt("userID")
+// 	var p models.Product
+// 	if err := c.BindJSON(&p); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid data"})
+// 		return
+// 	}
+
+// 	p.UserID = userID
+
+// 	res, err := db.DB.Exec("INSERT INTO products (title, description, price, quantity, user_id) VALUES (?, ?, ?, ?, ?)",
+// 		p.Title, p.Description, p.Price, p.Quantity, p.UserID)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "insert failed"})
+// 		return
+// 	}
+
+// 	id, _ := res.LastInsertId()
+// 	p.ID = int(id)
+// 	c.JSON(http.StatusCreated, p)
+// }
+
 func CreateProduct(c *gin.Context) {
-	userID := c.GetInt("userID")
-	var p models.Product
-	if err := c.BindJSON(&p); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid data"})
+	userIDInterface, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
+	userID := userIDInterface.(int)
 
-	p.UserID = userID
+	title := c.PostForm("title")
+	description := c.PostForm("description")
+	priceStr := c.PostForm("price")
+	quantityStr := c.PostForm("quantity")
 
-	res, err := db.DB.Exec("INSERT INTO products (title, description, price, quantity, user_id) VALUES (?, ?, ?, ?, ?)",
-		p.Title, p.Description, p.Price, p.Quantity, p.UserID)
+	// Парсим числа
+	price, err := strconv.ParseFloat(priceStr, 64)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "insert failed"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid price"})
+		return
+	}
+	quantity, err := strconv.Atoi(quantityStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid quantity"})
 		return
 	}
 
-	id, _ := res.LastInsertId()
-	p.ID = int(id)
-	c.JSON(http.StatusCreated, p)
+	// Добавляем продукт
+	_, err = db.DB.Exec(`
+		INSERT INTO products (title, description, price, quantity, user_id)
+		VALUES (?, ?, ?, ?, ?)`,
+		title, description, price, quantity, userID,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not insert product"})
+		return
+	}
+
+	c.Redirect(http.StatusSeeOther, "/")
 }
 
 // PUT /products/:id
