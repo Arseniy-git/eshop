@@ -45,10 +45,15 @@ import (
 // }
 
 func ShowCreateProductPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "create_product.html", nil)
+	userID, exists := c.Get("userID")
+	isLoggedIn := exists && userID != nil
+	c.HTML(http.StatusOK, "create_product.html", gin.H{
+		"IsLoggedIn": isLoggedIn})
 }
 
 func ListProducts(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	isLoggedIn := exists && userID != nil
 	rows, err := db.DB.Query("SELECT id, title, description, price, quantity, user_id FROM products")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
@@ -68,7 +73,8 @@ func ListProducts(c *gin.Context) {
 
 	//c.JSON(http.StatusOK, products)
 	c.HTML(http.StatusOK, "home.html", gin.H{
-		"Products": products,
+		"Products":   products,
+		"IsLoggedIn": isLoggedIn,
 	})
 }
 
@@ -96,7 +102,9 @@ func ListProducts(c *gin.Context) {
 // }
 
 func CreateProduct(c *gin.Context) {
+
 	userIDInterface, exists := c.Get("userID")
+
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
@@ -256,7 +264,8 @@ func DeleteProduct(c *gin.Context) {
 }
 
 func ListMyProducts(c *gin.Context) {
-	userID := c.GetInt("userID")
+	userID, exists := c.Get("userID")
+	isLoggedIn := exists && userID != nil
 
 	rows, err := db.DB.Query(`
 		SELECT id, title, description, price, quantity, user_id
@@ -281,6 +290,7 @@ func ListMyProducts(c *gin.Context) {
 
 	// c.JSON(http.StatusOK, products)
 	c.HTML(http.StatusOK, "my_products.html", gin.H{
-		"Products": products,
+		"Products":   products,
+		"IsLoggedIn": isLoggedIn,
 	})
 }

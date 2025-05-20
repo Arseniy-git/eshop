@@ -10,11 +10,17 @@ import (
 )
 
 func ShowLoginPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.html", gin.H{"Title": "Login"})
+	userID, exists := c.Get("userID")
+	isLoggedIn := exists && userID != nil
+	c.HTML(http.StatusOK, "login.html", gin.H{"Title": "Login",
+		"IsLoggedIn": isLoggedIn})
 }
 
 func ShowRegisterPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "register.html", gin.H{"Title": "Register"})
+	userID, exists := c.Get("userID")
+	isLoggedIn := exists && userID != nil
+	c.HTML(http.StatusOK, "register.html", gin.H{"Title": "Register",
+		"IsLoggedIn": isLoggedIn})
 }
 
 // func Register(c *gin.Context) {
@@ -110,4 +116,12 @@ func Login(c *gin.Context) {
 	//c.SetCookie("auth", token, 3600*24, "/", "", false, true)
 	c.SetCookie("Authorization", token, 3600, "/", "", false, true)
 	c.Redirect(http.StatusSeeOther, "/products/create")
+}
+
+func Logout(c *gin.Context) {
+	// Удаляем cookie с JWT
+	c.SetCookie("Authorization", "", -1, "/", "", false, true)
+
+	// Редирект на главную страницу
+	c.Redirect(http.StatusSeeOther, "/")
 }

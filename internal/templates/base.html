@@ -14,12 +14,15 @@
 </head>
 <body>
     <nav>
-        <a href="/">Home</a> |
-        <a href="/products/create">Add Product</a> |
-        <a href="/login">Login</a> |
-        <a href="/register">Register</a> |
-        <a href="/my-products">My products</a> |
-        <a href="/logout">Logout</a>
+    <a href="/"> Home</a> |
+    {{ if .IsLoggedIn }}
+        <a href="/my-products"> My Products</a> |
+        <a href="/products/create"> Add Product</a> |
+        <a href="/logout"> Logout</a> |
+    {{ else }}
+        <a href="/login"> Login</a> |
+        <a href="/register"> Register</a> |
+    {{ end }}
     </nav>
     <hr>
     

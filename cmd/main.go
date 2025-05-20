@@ -22,6 +22,8 @@ func main() {
 
 	r := gin.Default()
 	r.LoadHTMLGlob("internal/templates/*.html")
+	r.Use(middleware.JWTFromCookie())
+	r.Use(middleware.AddLoginStatus())
 
 	// Роуты без авторизации
 	//r.GET("/", handlers.ShowHomePage)
@@ -35,6 +37,7 @@ func main() {
 	r.GET("/products/:id", handlers.GetProductByID)
 
 	r.GET("/products/create", handlers.ShowCreateProductPage)
+	r.GET("/logout", handlers.Logout)
 
 	auth := r.Group("/")
 	auth.Use(middleware.JWTAuth())
