@@ -42,7 +42,7 @@ func main() {
 		auth.POST("/products", handlers.CreateProduct)
 		auth.PUT("/products/:id", handlers.UpdateProduct)
 		auth.DELETE("/products/:id", handlers.DeleteProduct)
-		auth.GET("/my/products", handlers.ListMyProducts)
+		auth.GET("/my-products", handlers.ListMyProducts)
 		r.POST("/products/create", handlers.CreateProduct)
 
 	}

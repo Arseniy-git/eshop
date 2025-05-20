@@ -279,5 +279,8 @@ func ListMyProducts(c *gin.Context) {
 		products = append(products, p)
 	}
 
-	c.JSON(http.StatusOK, products)
+	// c.JSON(http.StatusOK, products)
+	c.HTML(http.StatusOK, "my_products.html", gin.H{
+		"Products": products,
+	})
 }

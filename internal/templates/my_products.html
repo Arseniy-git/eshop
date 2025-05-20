@@ -1,0 +1,26 @@
+{{ define "my_products.html" }}
+{{ template "base.html" . }}
+
+<h1>My products</h1>
+
+{{ if not .Products }}
+    <p>You don't have any products</p>
+{{ else }}
+    <div class="container">
+        <table>
+            <tr>
+                <th>Title</th><th>Description</th><th>Price</th><th>Quantity</th>
+            </tr>
+            {{range .Products}}
+            <tr>
+                <td>{{.Title}}</td>
+                <td>{{.Description}}</td>
+                <td>${{printf "%.2f" .Price}}</td>
+                <td>{{.Quantity}}</td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+{{ end }}
+
+{{ end }}
