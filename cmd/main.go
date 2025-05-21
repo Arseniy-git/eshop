@@ -47,6 +47,9 @@ func main() {
 		auth.DELETE("/products/:id", handlers.DeleteProduct)
 		auth.GET("/my-products", handlers.ListMyProducts)
 		r.POST("/products/create", handlers.CreateProduct)
+		r.GET("/products/edit/:id", handlers.ShowEditProductPage)
+		r.POST("/products/edit/:id", handlers.EditProduct)
+		r.POST("/products/delete/:id", handlers.DeleteProduct)
 
 	}
 

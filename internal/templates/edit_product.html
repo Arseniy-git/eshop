@@ -1,0 +1,11 @@
+{{ define "edit_product.html" }}
+{{ template "base.html" . }}
+<h1>Edit Product</h1>
+<form method="POST">
+    <label>Title:</label><input type="text" name="title" value="{{ .Product.Title }}"><br>
+    <label>Description:</label><input type="text" name="description" value="{{ .Product.Description }}"><br>
+    <label>Price:</label><input type="number" step="0.01" name="price" value="{{ .Product.Price }}"><br>
+    <label>Quantity:</label><input type="number" name="quantity" value="{{ .Product.Quantity }}"><br>
+    <button type="submit">Save</button>
+</form>
+{{ end }}
