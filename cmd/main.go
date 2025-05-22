@@ -28,6 +28,8 @@ func main() {
 
 	// Роуты без авторизации
 	//r.GET("/", handlers.ShowHomePage)
+	r.GET("/products/:id", handlers.ShowProduct)
+
 	r.GET("/login", handlers.ShowLoginPage)
 	r.GET("/register", handlers.ShowRegisterPage)
 
@@ -35,7 +37,7 @@ func main() {
 	r.POST("/login", handlers.Login)
 
 	r.GET("/", handlers.ListProducts) // публичный
-	r.GET("/products/:id", handlers.GetProductByID)
+	//r.GET("/products/:id", handlers.GetProductByID)
 
 	r.GET("/products/create", handlers.ShowCreateProductPage)
 	r.GET("/logout", handlers.Logout)

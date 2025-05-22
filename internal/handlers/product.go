@@ -405,3 +405,21 @@ func DeleteProduct(c *gin.Context) {
 
 	c.Redirect(http.StatusFound, "/my-products")
 }
+
+////////////////////
+
+func ShowProduct(c *gin.Context) {
+	id := c.Param("id")
+
+	var p models.Product
+	err := db.DB.QueryRow("SELECT id, title, description, price, quantity, user_id, image_url FROM products WHERE id = ?", id).
+		Scan(&p.ID, &p.Title, &p.Description, &p.Price, &p.Quantity, &p.UserID, &p.ImageURL)
+	if err != nil {
+		c.String(http.StatusNotFound, "Product not found")
+		return
+	}
+
+	c.HTML(http.StatusOK, "product_detail.html", gin.H{
+		"Product": p,
+	})
+}

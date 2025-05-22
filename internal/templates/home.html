@@ -8,13 +8,19 @@
     {{ range .Products }}
       <div class="col-md-4">
         <div class="card mb-4">
-          <div class="card-body">
+          <div class="card-body text-center">
             {{ if .ImageURL }}
-              <img src="/{{.ImageURL}}" alt="Product Image" class="img-thumbnail" style="max-width: 100px;">
+              <a href="/products/{{ .ID }}">
+                <img src="/{{ .ImageURL }}" alt="Product Image" class="img-thumbnail mb-2" style="max-width: 100px;">
+              </a>
             {{ else }}
               <span class="text-muted">No image</span>
             {{ end }}
-            <h5 class="card-title">{{ .Title }}</h5>
+
+            <h5 class="card-title">
+              <a href="/products/{{ .ID }}" class="text-decoration-none">{{ .Title }}</a>
+            </h5>
+
             <p class="card-text">{{ .Description }}</p>
             <p><strong>${{ printf "%.2f" .Price }}</strong></p>
             <p>Quantity: {{ .Quantity }}</p>
@@ -27,9 +33,7 @@
   </div>
 </div>
 
-
 {{ end }}
-
 
 
 

@@ -1,0 +1,15 @@
+{{ define "product_detail.html" }}
+{{ template "base.html" . }}
+
+<div class="container mt-5">
+  <h2>{{ .Product.Title }}</h2>
+  {{ if .Product.ImageURL }}
+    <img src="/{{ .Product.ImageURL }}" alt="{{ .Product.Title }}" class="img-fluid mb-3" style="max-width: 300px;">
+  {{ end }}
+  <p><strong>Description:</strong> {{ .Product.Description }}</p>
+  <p><strong>Price:</strong> ${{ printf "%.2f" .Product.Price }}</p>
+  <p><strong>Quantity:</strong> {{ .Product.Quantity }}</p>
+  <a href="/my-products" class="btn btn-secondary">Back to My Products</a>
+</div>
+
+{{ end }}
