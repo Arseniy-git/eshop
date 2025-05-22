@@ -5,7 +5,10 @@ import (
 	"eshop/internal/db"
 	"eshop/internal/forms"
 	"eshop/internal/models"
+	"io"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -55,7 +58,7 @@ func ShowCreateProductPage(c *gin.Context) {
 func ListProducts(c *gin.Context) {
 	userID, exists := c.Get("userID")
 	isLoggedIn := exists && userID != nil
-	rows, err := db.DB.Query("SELECT id, title, description, price, quantity, user_id FROM products")
+	rows, err := db.DB.Query("SELECT id, title, description, price, quantity, user_id, image_url FROM products")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
 		return
@@ -65,7 +68,8 @@ func ListProducts(c *gin.Context) {
 	var products []models.Product
 	for rows.Next() {
 		var p models.Product
-		if err := rows.Scan(&p.ID, &p.Title, &p.Description, &p.Price, &p.Quantity, &p.UserID); err != nil {
+		if err := rows.Scan(&p.ID, &p.Title, &p.Description, &p.Price, &p.Quantity, &p.UserID, &p.ImageURL); err != nil {
+			log.Println("Scan error:", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "scan error"})
 			return
 		}
@@ -129,11 +133,25 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
+	file, header, err := c.Request.FormFile("image")
+	var imagePath string
+
+	if err == nil {
+		filename := header.Filename
+		imagePath = "uploads/" + filename
+
+		out, err := os.Create(imagePath)
+		if err == nil {
+			defer out.Close()
+			io.Copy(out, file)
+		}
+	}
+
 	// Добавляем продукт
 	_, err = db.DB.Exec(`
-		INSERT INTO products (title, description, price, quantity, user_id)
-		VALUES (?, ?, ?, ?, ?)`,
-		title, description, price, quantity, userID,
+		INSERT INTO products (title, description, price, quantity, user_id, image_url)
+		VALUES (?, ?, ?, ?, ?, ?)`,
+		title, description, price, quantity, userID, imagePath,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not insert product"})
@@ -269,7 +287,7 @@ func ListMyProducts(c *gin.Context) {
 	isLoggedIn := exists && userID != nil
 
 	rows, err := db.DB.Query(`
-		SELECT id, title, description, price, quantity, user_id
+		SELECT id, title, description, price, quantity, user_id, image_url
 		FROM products
 		WHERE user_id = ?
 	`, userID)
@@ -282,7 +300,7 @@ func ListMyProducts(c *gin.Context) {
 	products := []models.Product{}
 	for rows.Next() {
 		var p models.Product
-		if err := rows.Scan(&p.ID, &p.Title, &p.Description, &p.Price, &p.Quantity, &p.UserID); err != nil {
+		if err := rows.Scan(&p.ID, &p.Title, &p.Description, &p.Price, &p.Quantity, &p.UserID, &p.ImageURL); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse product"})
 			return
 		}
@@ -326,11 +344,47 @@ func EditProduct(c *gin.Context) {
 		return
 	}
 
-	_, err := db.DB.Exec(`
-		UPDATE products
-		SET title = ?, description = ?, price = ?, quantity = ?
-		WHERE id = ?`,
-		form.Title, form.Description, form.Price, form.Quantity, id)
+	// Пытаемся получить файл
+	fileHeader, err := c.FormFile("image_url")
+	var imagePath string
+
+	if err == nil && fileHeader != nil {
+		// Загружаем новое изображение
+		src, err := fileHeader.Open()
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Unable to open uploaded image")
+			return
+		}
+		defer src.Close()
+
+		// Сохраняем изображение на диск
+		imagePath = "uploads/" + fileHeader.Filename
+		dst, err := os.Create(imagePath)
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Unable to save image")
+			return
+		}
+		defer dst.Close()
+
+		if _, err := io.Copy(dst, src); err != nil {
+			c.String(http.StatusInternalServerError, "Unable to write image file")
+			return
+		}
+
+		// Обновляем с новым изображением
+		_, err = db.DB.Exec(`
+			UPDATE products
+			SET title = ?, description = ?, price = ?, quantity = ?, image_url = ?
+			WHERE id = ?`,
+			form.Title, form.Description, form.Price, form.Quantity, imagePath, id)
+	} else {
+		// Обновляем без изменения изображения
+		_, err = db.DB.Exec(`
+			UPDATE products
+			SET title = ?, description = ?, price = ?, quantity = ?
+			WHERE id = ?`,
+			form.Title, form.Description, form.Price, form.Quantity, id)
+	}
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Failed to update product")

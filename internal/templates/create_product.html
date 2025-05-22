@@ -2,7 +2,7 @@
 {{ template "base.html" . }}
 
 <h2 class="text-center my-4">Create Product</h2>
-<form method="POST" action="/products/create">
+<form method="POST" action="/products/create" enctype="multipart/form-data">
   <div class="mb-3 col-sm-6 mx-auto">
     <label for="title" class="form-label">Title</label>
     <input type="text" class="form-control" id="title" name="title" required>
@@ -21,6 +21,11 @@
   <div class="mb-3 col-sm-6 mx-auto">
     <label for="quantity" class="form-label">Quantity</label>
     <input type="number" class="form-control" id="quantity" name="quantity" required>
+  </div>
+
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="image" class="form-label">Product Image</label>
+    <input type="file" class="form-control" id="image" name="image">
   </div>
 
   <button type="submit" class="btn btn-primary w-50 d-block mx-auto">Create Product</button>

@@ -9,6 +9,11 @@
       <div class="col-md-4">
         <div class="card mb-4">
           <div class="card-body">
+            {{ if .ImageURL }}
+              <img src="/{{.ImageURL}}" alt="Product Image" class="img-thumbnail" style="max-width: 100px;">
+            {{ else }}
+              <span class="text-muted">No image</span>
+            {{ end }}
             <h5 class="card-title">{{ .Title }}</h5>
             <p class="card-text">{{ .Description }}</p>
             <p><strong>${{ printf "%.2f" .Price }}</strong></p>

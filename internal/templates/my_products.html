@@ -8,28 +8,38 @@
     <div class="alert alert-info text-center">You don't have any products.</div>
   {{ else }}
     <div class="table-responsive">
-      <table class="table table-striped table-bordered">
-        <thead class="table-dark">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark text-center">
           <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Actions</th>
+            <th scope="col">Image</th>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
           {{ range .Products }}
           <tr>
+            <td class="text-center">
+              {{ if .ImageURL }}
+                <img src="/{{.ImageURL}}" alt="Product Image" class="img-thumbnail" style="max-width: 100px;">
+              {{ else }}
+                <span class="text-muted">No image</span>
+              {{ end }}
+            </td>
             <td>{{ .Title }}</td>
             <td>{{ .Description }}</td>
             <td>${{ printf "%.2f" .Price }}</td>
             <td>{{ .Quantity }}</td>
-            <td>
-              <a href="/products/edit/{{ .ID }}" class="btn btn-sm btn-warning me-2">Edit</a>
-              <form method="POST" action="/products/delete/{{ .ID }}" style="display:inline;">
-                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
-              </form>
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-2">
+                <a href="/products/edit/{{ .ID }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                <form method="POST" action="/products/delete/{{ .ID }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
+                </form>
+              </div>
             </td>
           </tr>
           {{ end }}
@@ -40,4 +50,5 @@
 </div>
 
 {{ end }}
+
 

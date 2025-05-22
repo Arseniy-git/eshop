@@ -24,6 +24,7 @@ func main() {
 	r.LoadHTMLGlob("internal/templates/*.html")
 	r.Use(middleware.JWTFromCookie())
 	r.Use(middleware.AddLoginStatus())
+	r.Static("/uploads", "./uploads")
 
 	// Роуты без авторизации
 	//r.GET("/", handlers.ShowHomePage)

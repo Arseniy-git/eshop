@@ -1,7 +1,7 @@
 {{ define "edit_product.html" }}
 {{ template "base.html" . }}
 <h2 class="text-center my-4">Edit Product</h2>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
   <div class="mb-3 col-sm-6 mx-auto">
     <label for="title" class="form-label">Title</label>
     <input type="text" class="form-control" id="title" name="title" value="{{ .Product.Title }}" required>
@@ -21,6 +21,12 @@
     <label for="quantity" class="form-label">Quantity</label>
     <input type="number" class="form-control" id="quantity" name="quantity" value="{{ .Product.Quantity }}" required>
   </div>
+
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="image_url" class="form-label">Upload New Image</label>
+    <input type="file" class="form-control" id="image_url" name="image_url">
+  </div>
+
 
   <button type="submit" class="btn btn-success w-50 d-block mx-auto">Save</button>
 </form>
