@@ -1,21 +1,29 @@
 {{ define "create_product.html" }}
 {{ template "base.html" . }}
 
-<h2>Create Product</h2>
-<form action="/products" method="POST">
-    <label>Title:</label><br>
-    <input type="text" name="title" required><br><br>
+<h2 class="text-center my-4">Create Product</h2>
+<form method="POST" action="/products/create">
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="title" class="form-label">Title</label>
+    <input type="text" class="form-control" id="title" name="title" required>
+  </div>
 
-    <label>Description:</label><br>
-    <textarea name="description" required></textarea><br><br>
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="description" class="form-label">Description</label>
+    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+  </div>
 
-    <label>Price:</label><br>
-    <input type="number" name="price" step="0.01" required><br><br>
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="price" class="form-label">Price</label>
+    <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+  </div>
 
-    <label>Quantity:</label><br>
-    <input type="number" name="quantity" required><br><br>
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="quantity" class="form-label">Quantity</label>
+    <input type="number" class="form-control" id="quantity" name="quantity" required>
+  </div>
 
-    <button type="submit">Create</button>
+  <button type="submit" class="btn btn-primary w-50 d-block mx-auto">Create Product</button>
 </form>
 
 {{ end }}

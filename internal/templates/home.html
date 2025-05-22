@@ -1,32 +1,30 @@
 {{ define "home.html" }}
 {{ template "base.html" . }}
 
-<h1>All Products</h1>
+<h1 class="text-center my-4">All Products</h1>
 
-{{ if .Products }}
-<div class="container">
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Quantity</th>
-        </tr>
-        {{ range .Products }}
-        <tr>
-            <td>{{ .Title }}</td>
-            <td>{{ .Description }}</td>
-            <td>${{ printf "%.2f" .Price }}</td>
-            <td>{{ .Quantity }}</td>
-        </tr>
-        {{ end }}
-    </table>
+<div class="container mt-4">
+  <div class="row">
+    {{ range .Products }}
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">{{ .Title }}</h5>
+            <p class="card-text">{{ .Description }}</p>
+            <p><strong>${{ printf "%.2f" .Price }}</strong></p>
+            <p>Quantity: {{ .Quantity }}</p>
+          </div>
+        </div>
+      </div>
+    {{ else }}
+      <p>No products available.</p>
+    {{ end }}
+  </div>
 </div>
-{{ else }}
-<p>No products available.</p>
-{{ end }}
+
 
 {{ end }}
+
 
 
 

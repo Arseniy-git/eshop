@@ -1,11 +1,28 @@
 {{ define "edit_product.html" }}
 {{ template "base.html" . }}
-<h1>Edit Product</h1>
+<h2 class="text-center my-4">Edit Product</h2>
 <form method="POST">
-    <label>Title:</label><input type="text" name="title" value="{{ .Product.Title }}"><br>
-    <label>Description:</label><input type="text" name="description" value="{{ .Product.Description }}"><br>
-    <label>Price:</label><input type="number" step="0.01" name="price" value="{{ .Product.Price }}"><br>
-    <label>Quantity:</label><input type="number" name="quantity" value="{{ .Product.Quantity }}"><br>
-    <button type="submit">Save</button>
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="title" class="form-label">Title</label>
+    <input type="text" class="form-control" id="title" name="title" value="{{ .Product.Title }}" required>
+  </div>
+
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="description" class="form-label">Description</label>
+    <input type="text" class="form-control" id="description" name="description" value="{{ .Product.Description }}" required>
+  </div>
+
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="price" class="form-label">Price</label>
+    <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ .Product.Price }}" required>
+  </div>
+
+  <div class="mb-3 col-sm-6 mx-auto">
+    <label for="quantity" class="form-label">Quantity</label>
+    <input type="number" class="form-control" id="quantity" name="quantity" value="{{ .Product.Quantity }}" required>
+  </div>
+
+  <button type="submit" class="btn btn-success w-50 d-block mx-auto">Save</button>
 </form>
+
 {{ end }}
